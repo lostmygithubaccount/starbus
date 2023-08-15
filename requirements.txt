@@ -1,0 +1,11 @@
+# python
+black
+python-dotenv
+
+# data
+ibis-framework[duckdb,trino] @ git+https://github.com/ibis-project/ibis
+
+# viz
+plotly
+streamlit
+
