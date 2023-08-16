@@ -1,4 +1,14 @@
-# Learn the basics of Ibis
+# Learn Ibis Basics with Starburst Galaxy
+
+Welcome to the "Learn Ibis Basics" tutorial, where you will explore useful ways to interact with a Starburst Galaxy database using Ibis in Python. The examples will start with connecting to the database and loading tables, and increase in complexity with the addition of filtering and grouping operations.
+
+## Requirements
+
+To complete the tutorial, ensure you have Ibis and dotenv installed in your Python environment. You will also need access to a Starburst Galaxy database with the necessary credentials.
+
+## Connect to the Database
+
+The first step is to connect to your Starburst Galaxy database using Ibis. In this tutorial, we will be loading the credentials from environment variables.
 
 ```{python}
 # | code-fold: true
@@ -25,47 +35,59 @@ schema = "demo"
 con = ibis.trino.connect(
     user=user, password=password, host=host, port=port, database=catalog, schema=schema
 )
+con
+```
 
+## Load Tables from the Database
+
+Once you have a connection established, you can load tables from your database into Ibis. In this example, we are loading the 'astronauts' and 'missions' tables.
+
+```{python}
 # tables
 astronauts = con.table("astronauts")
 missions = con.table("missions")
-
-# aliases
-a = astronauts
-m = missions
-```
-
-
-```{python}
-a
 ```
 
 ```{python}
-m
+astronauts[0:5]
 ```
 
 ```{python}
-a.select("name", "nationality", "mission_title", "mission_number", "hours_mission")
+missions[0:5]
 ```
 
-```{python}
-m.select("company_name", "status_rocket", "cost", "status_mission")
-```
+## Querying the Database
+
+With Ibis, you can run SQL-like queries on your tables. For example, you can select specific columns from a table:
 
 ```{python}
-a.select(
-    "name", "nationality", "mission_title", "mission_number", "hours_mission"
-).filter(~a["nationality"].like("U.S.%"))
+astronauts.select("name", "nationality", "mission_title", "mission_number", "hours_mission")
 ```
 
-```{python}
-m.select("company_name", "status_rocket", "cost", "status_mission").filter(
-    m["status_mission"] == "Failure"
-)
-```
+And from the 'missions' table:
 
 ```{python}
-a.filter(~a["nationality"].like("U.S.%")).agg(
+missions.select("company_name", "status_rocket", "cost", "status_mission")
+```
+
+You can also apply filters to your queries:
+
+```{python}
+astronauts.filter(~astronauts["nationality"].like("U.S.%"))
+```
+
+And in the 'missions' table:
+
+```{python}
+missions.filter(missions["status_mission"] == "Failure")
+```
+
+## Aggregating and Grouping Results
+
+Ibis also supports aggregate functions and grouping. For example, you can count the number of rows in a table and group the results by a specific column:
+
+```{python}
+astronauts.filter(~astronauts["nationality"].like("U.S.%")).agg(
     [
         ibis._.count().name("number_trips"),
         ibis._["hours_mission"].max().name("longest_time"),
@@ -74,8 +96,10 @@ a.filter(~a["nationality"].like("U.S.%")).agg(
 )
 ```
 
+You can also group by 'nationality':
+
 ```{python}
-a.filter(~a["nationality"].like("U.S.%")).group_by("nationality").agg(
+astronauts.filter(~astronauts["nationality"].like("U.S.%")).group_by("nationality").agg(
     [
         ibis._.count().name("number_trips"),
         ibis._["hours_mission"].max().name("longest_time"),
@@ -84,9 +108,10 @@ a.filter(~a["nationality"].like("U.S.%")).group_by("nationality").agg(
 )
 ```
 
+And order the results by 'number_trips' and 'longest_time':
 
 ```{python}
-a.filter(~a["nationality"].like("U.S.%")).group_by("nationality").agg(
+astronauts.filter(~astronauts["nationality"].like("U.S.%")).group_by("nationality").agg(
     [
         ibis._.count().name("number_trips"),
         ibis._["hours_mission"].max().name("longest_time"),
@@ -95,8 +120,15 @@ a.filter(~a["nationality"].like("U.S.%")).group_by("nationality").agg(
 ).order_by([ibis.desc("number_trips"), ibis.desc("longest_time")])
 ```
 
+For the 'missions' table, you can group by 'company_name' and 'status_rocket', and then sum the 'cost':
+
 ```{python}
-m.filter(m["status_mission"] == "Failure").group_by(
+missions.filter(missions["status_mission"] == "Failure").group_by(
     ["company_name", "status_rocket"]
 ).agg(ibis._["cost"].sum().name("cost")).order_by(ibis.desc("cost"))
 ```
+
+## Next Steps
+
+Check out our other tutorials, or dive right into the Ibis documentation and experiment with your own data.
+
