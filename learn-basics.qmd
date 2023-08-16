@@ -2,6 +2,8 @@
 
 Welcome to the "Learn Ibis Basics" tutorial, where you will explore useful ways to interact with a Starburst Galaxy database using Ibis in Python. The examples will start with connecting to the database and loading tables, and increase in complexity with the addition of filtering and grouping operations.
 
+Content largely stolen from [Starburst Galaxy documentation](https://docs.starburst.io/starburst-galaxy/tutorials/learn-basics).
+
 ## Requirements
 
 To complete the tutorial, ensure you have Ibis and dotenv installed in your Python environment. You will also need access to a Starburst Galaxy database with the necessary credentials.
