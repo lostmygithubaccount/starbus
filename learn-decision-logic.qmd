@@ -1,3 +1,7 @@
+# Learn Ibis decision logic
+
+```{python}
+# | code-fold: true
 # imports
 import os
 import ibis
@@ -29,3 +33,13 @@ missions = con.table("missions")
 # aliases
 a = astronauts
 m = missions
+```
+
+```{python}
+a
+```
+
+```{python}
+m
+```
+

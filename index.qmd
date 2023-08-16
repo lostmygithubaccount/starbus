@@ -1,0 +1,10 @@
+---
+title: Starbus
+---
+
+# Ibis on Starburst Galaxy demo
+
+This demo shows how to use Ibis to query a Starburst Galaxy database.
+
+Content largely stolen from [Starburst Galaxy documentation](https://docs.starburst.io/starburst-galaxy/tutorials/learn-basics).
+

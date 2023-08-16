@@ -1,0 +1,102 @@
+# Learn the basics of Ibis
+
+```{python}
+# | code-fold: true
+# imports
+import os
+import ibis
+from dotenv import load_dotenv
+
+# configure Ibis
+ibis.options.interactive = True
+
+# load env variables
+load_dotenv()
+user = os.getenv("USERNAME")
+password = os.getenv("PASSWORD")
+
+# variables
+host = "voda-sample.trino.galaxy.starburst.io"
+port = 443
+catalog = "sample"
+schema = "demo"
+
+# connect
+con = ibis.trino.connect(
+    user=user, password=password, host=host, port=port, database=catalog, schema=schema
+)
+
+# tables
+astronauts = con.table("astronauts")
+missions = con.table("missions")
+
+# aliases
+a = astronauts
+m = missions
+```
+
+
+```{python}
+a
+```
+
+```{python}
+m
+```
+
+```{python}
+a.select("name", "nationality", "mission_title", "mission_number", "hours_mission")
+```
+
+```{python}
+m.select("company_name", "status_rocket", "cost", "status_mission")
+```
+
+```{python}
+a.select(
+    "name", "nationality", "mission_title", "mission_number", "hours_mission"
+).filter(~a["nationality"].like("U.S.%"))
+```
+
+```{python}
+m.select("company_name", "status_rocket", "cost", "status_mission").filter(
+    m["status_mission"] == "Failure"
+)
+```
+
+```{python}
+a.filter(~a["nationality"].like("U.S.%")).agg(
+    [
+        ibis._.count().name("number_trips"),
+        ibis._["hours_mission"].max().name("longest_time"),
+        ibis._["hours_mission"].min().name("shortest_time"),
+    ]
+)
+```
+
+```{python}
+a.filter(~a["nationality"].like("U.S.%")).group_by("nationality").agg(
+    [
+        ibis._.count().name("number_trips"),
+        ibis._["hours_mission"].max().name("longest_time"),
+        ibis._["hours_mission"].min().name("shortest_time"),
+    ]
+)
+```
+
+
+```{python}
+a.filter(~a["nationality"].like("U.S.%")).group_by("nationality").agg(
+    [
+        ibis._.count().name("number_trips"),
+        ibis._["hours_mission"].max().name("longest_time"),
+        ibis._["hours_mission"].min().name("shortest_time"),
+    ]
+).order_by([ibis.desc("number_trips"), ibis.desc("longest_time")])
+```
+
+```{python}
+m.filter(m["status_mission"] == "Failure").group_by(
+    ["company_name", "status_rocket"]
+).agg(ibis._["cost"].sum().name("cost")).order_by(ibis.desc("cost"))
+```

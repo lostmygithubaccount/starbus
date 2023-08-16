@@ -1,0 +1,17 @@
+project:
+  type: book
+
+book:
+  title: "Starbus (Ibis + Starburst Galaxy)"
+  author: "Cody"
+  date: "09/01/2023"
+  chapters:
+    - index.qmd
+    - learn-basics.qmd
+    - learn-decision-logic.qmd
+    - learn-window-functions.qmd
+    - learn-complex-grouping.qmd
+
+format:
+  html:
+    theme: darkly
